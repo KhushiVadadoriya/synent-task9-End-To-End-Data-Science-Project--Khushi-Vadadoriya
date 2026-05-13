@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Student Exam Performance Prediction</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --bg1: #f7f8fc;
+            --bg2: #eef4ff;
+            --card: rgba(255, 255, 255, 0.9);
+            --text: #172033;
+            --muted: #667085;
+            --accent: #2563eb;
+            --accent-dark: #1d4ed8;
+            --border: #d9e2f2;
+            --field: #f9fbff;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, Helvetica, sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at top, rgba(37, 99, 235, 0.12), transparent 28%),
+                linear-gradient(135deg, var(--bg1), var(--bg2));
+            padding: 24px;
+        }
+
+        .page {
+            width: min(920px, 100%);
+            margin: 0 auto;
+        }
+
+        .hero {
+            margin: 18px 0 22px;
+        }
+
+        .eyebrow {
+            display: inline-block;
+            margin-bottom: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: var(--accent);
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(2rem, 4vw, 3.2rem);
+            line-height: 1.05;
+        }
+
+        .subtext {
+            margin: 12px 0 0;
+            max-width: 60ch;
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid rgba(217, 226, 242, 0.9);
+            border-radius: 24px;
+            box-shadow: 0 18px 50px rgba(15, 23, 42, 0.08);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .card-header {
+            padding: 28px 28px 0;
+        }
+
+        .card-header h2 {
+            margin: 0;
+            font-size: 1.4rem;
+        }
+
+        .card-body {
+            padding: 24px 28px 28px;
+        }
+
+        form {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .field.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: #344054;
+        }
+
+        select,
+        input {
+            width: 100%;
+            min-height: 48px;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            background: var(--field);
+            color: var(--text);
+            padding: 0 14px;
+            font: inherit;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+        }
+
+        select:focus,
+        input:focus {
+            border-color: rgba(37, 99, 235, 0.55);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+            transform: translateY(-1px);
+        }
+
+        .actions {
+            grid-column: 1 / -1;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 14px;
+            margin-top: 6px;
+        }
+
+        .button {
+            min-height: 50px;
+            padding: 0 22px;
+            border: 0;
+            border-radius: 999px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 10px 24px rgba(37, 99, 235, 0.25);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 14px 30px rgba(37, 99, 235, 0.3);
+        }
+
+        .result {
+            grid-column: 1 / -1;
+            margin: 4px 0 0;
+            padding: 18px 20px;
+            border-radius: 16px;
+            background: rgba(37, 99, 235, 0.08);
+            border: 1px solid rgba(37, 99, 235, 0.16);
+            font-size: 1rem;
+            color: #1e3a8a;
+        }
+
+        .result strong {
+            display: block;
+            margin-top: 8px;
+            font-size: 1.7rem;
+            color: var(--text);
+        }
+
+        @media (max-width: 720px) {
+            body {
+                padding: 16px;
+            }
+
+            form {
+                grid-template-columns: 1fr;
+            }
+
+            .card-header,
+            .card-body {
+                padding-left: 18px;
+                padding-right: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="page">
+        <section class="hero">
+            <span class="eyebrow">Student Exam Performance Indicator</span>
+            <h1>Predict maths performance with a clean, simple form.</h1>
+            <p class="subtext">Enter a few student details and get an instant prediction. The layout is intentionally minimal, with a polished card style and gentle spacing.</p>
+        </section>
+
+        <section class="card">
+            <div class="card-header">
+                <h2>Student Exam Performance Prediction</h2>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('predict_datapoint')}}" method="post">
+                    <div class="field">
+                        <label for="gender">Gender</label>
+                        <select id="gender" name="gender" required>
+                            <option value="" selected disabled>Select your gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="ethnicity">Race or Ethnicity</label>
+                        <select id="ethnicity" name="ethnicity" required>
+                            <option value="" selected disabled>Select ethnicity</option>
+                            <option value="group A">Group A</option>
+                            <option value="group B">Group B</option>
+                            <option value="group C">Group C</option>
+                            <option value="group D">Group D</option>
+                            <option value="group E">Group E</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="parental_level_of_education">Parental Level of Education</label>
+                        <select id="parental_level_of_education" name="parental_level_of_education" required>
+                            <option value="" selected disabled>Select parent education</option>
+                            <option value="associate's degree">Associate's degree</option>
+                            <option value="bachelor's degree">Bachelor's degree</option>
+                            <option value="high school">High school</option>
+                            <option value="master's degree">Master's degree</option>
+                            <option value="some college">Some college</option>
+                            <option value="some high school">Some high school</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="lunch">Lunch Type</label>
+                        <select id="lunch" name="lunch" required>
+                            <option value="" selected disabled>Select lunch type</option>
+                            <option value="free/reduced">Free/reduced</option>
+                            <option value="standard">Standard</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="test_preparation_course">Test Preparation Course</label>
+                        <select id="test_preparation_course" name="test_preparation_course" required>
+                            <option value="" selected disabled>Select course status</option>
+                            <option value="none">None</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="reading_score">Reading Score out of 100</label>
+                        <input id="reading_score" type="number" name="reading_score" min="0" max="100" placeholder="Enter reading score" required />
+                    </div>
+
+                    <div class="field">
+                        <label for="writing_score">Writing Score out of 100</label>
+                        <input id="writing_score" type="number" name="writing_score" min="0" max="100" placeholder="Enter writing score" required />
+                    </div>
+
+                    <div class="actions">
+                        <button class="button" type="submit">Predict Maths Score</button>
+                    </div>
+
+                    {% if results is defined %}
+                    <div class="result">
+                        Prediction result
+                        <strong>{{ results }}</strong>
+                    </div>
+                    {% endif %}
+                </form>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
+
+
